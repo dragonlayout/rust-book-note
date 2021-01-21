@@ -22,3 +22,12 @@
 
 ### Chapter 2
 
+`crate`: a collection of Rust source code files
+
+`Cargo.toml`: 
+
+`cargo.lock`: 
+
+### Chapter 3
+
+By default variables are immutable.

@@ -1,10 +1,9 @@
 [package]
-name = "rust-book-note"
+name = "variables"
 version = "0.1.0"
-authors = ["chenlong <dragonlayoutt@gmail.com>"]
+authors = ["陈龙"]
 edition = "2018"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-rand = "0.6.0"
