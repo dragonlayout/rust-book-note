@@ -1,3 +1,5 @@
+use std::ops::Index;
+
 fn main() {
     // variable scope
     let s = "hello";
@@ -49,6 +51,44 @@ fn main() {
     let s1 = String::from("hello");
     let length = calculate_length_reference(&s1);
     println!("The length of '{}' is {}.", s1, length);
+
+    // Mutable reference
+    let mut s = String::from("hello");
+    change(&mut s);
+    // you can have only one mutable reference to a particular piece of data in a particular scope
+    let r1 = &mut s;
+    // let r2 = &mut s;
+    // println!("{}, {}", r1, r2);
+    // prevent data races at compile time
+
+    // Dangling References
+    // let reference_nothing = dangle();
+
+    // Rules of References
+    // 1. At any given time, you can have either one mutable reference or any number of immutable references.
+    // 2. References must always be valid.
+
+    // The Slice Type
+    println!("--- The slice type ---");
+    let mut s = String::from("hello world");
+
+    let word = first_word(&s); // word will get the value 5
+
+    s.clear(); // this empties the String, making it equal to ""
+
+    // word still has the value 5 here, but there's no more string that
+    // we could meaningfully use the value 5 with. word is now totally invalid!
+
+    // String slice
+    let s = String::from("hello world");
+
+    let hello = &s[0..5];
+    let world = &s[6..11];
+
+    let mut s = String::from("hello world");
+    let word = first_word_slice(&s);
+    println!("first world is {}", word);
+    s.clear();
 }
 
 fn takes_ownership(some_string: String) { // some_string comes into scope
@@ -77,4 +117,37 @@ fn calculate_length(s: String) -> (String, usize) {
 
 fn calculate_length_reference(s: &String) -> usize {
     s.len()
+}
+
+fn change(some_string: &mut String) {
+    some_string.push_str(", word");
+}
+
+// fn dangle() -> &String {
+//     let s = String::from("hello");
+//     &s
+// } // s goes out of the scope, will calls `drop`, reference s will point to a invalid string
+
+fn first_word(s: &String) -> usize {
+    let bytes = s.as_bytes();
+
+    for (i, &item) in bytes.iter().enumerate() {
+        if item == b' ' {
+            return i;
+        }
+    }
+
+    s.len()
+}
+
+fn first_word_slice(s: &String) -> &str {
+    let bytes = s.as_bytes();
+
+    for (i, &item) in bytes.iter().enumerate() {
+        if item == b' ' {
+            return &s[0..i];
+        }
+    }
+
+    &s[0..]
 }
