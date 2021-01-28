@@ -8,8 +8,18 @@ impl Rectangle {
     fn area(&self) -> u32 {
         self.width * self.height
     }
+
     fn can_hold(&self, other: &Rectangle) -> bool {
         self.width > other.width && self.height > other.height
+    }
+
+    // Associated function
+    // often used for constructions that return a new instance of the struct
+    fn square(size: u32) -> Rectangle {
+        Rectangle {
+            width: size,
+            height: size
+        }
     }
 }
 
@@ -26,6 +36,9 @@ fn main() {
     println!("The rectangles is {:#?}", rect2);
     // println!("The area of the rectangles is {}", area(&rect2));
     println!("The area of the rectangles is {}", rect2.area());
+
+    let square = Rectangle::square(30);
+
 }
 
 // fn area(width: u32, height: u32) -> u32 {
