@@ -14,6 +14,7 @@ fn main() {
     let s2 = s1; // s1 was moved into s2
     // println!("{}, world", s1);
 
+    // if we want to deeply copy the heap data of the `String`, not just the stack data
     let s1 = String::from("hello");
     let s2 = s1.clone();
     print!("s1 = {}, s2 = {}", s1, s2);
@@ -24,10 +25,11 @@ fn main() {
 
     // ownership and function
     let s = String::from("hello"); // s comes into scope
+    // 函数参数赋值操作, s moves into the function
     takes_ownership(s); // s's value moves into the function
-    // println!("s: {}", s); // borrow of moved value: `s`. and so s is not longer valid here
-    let x = 5;
-    makes_copy(x);
+    // println!("s: {}", s);       // borrow of moved value: `s`. and so s is not longer valid here
+    let x = 5;               // x comes into the scope
+    makes_copy(x);   // i32 is Copy
     println!("x: {}", x);
 
     // return values and scope
@@ -42,6 +44,8 @@ fn main() {
     // here, s3 goes out of scope and it dropped. s2 goes out of scope but was moved,
     // so nothing happens. s1 goes out of scope and is dropped.
 
+    // What if we want to let a function use a value but not take ownership.
+
     let s1 = String::from("hello");
     let (s2, len) = calculate_length(s1); // s1 is moved, so calculate_length return (s2, len)
     println!("The length of '{}' is {}.", s2, len);
@@ -51,6 +55,7 @@ fn main() {
     let s1 = String::from("hello");
     let length = calculate_length_reference(&s1);
     println!("The length of '{}' is {}.", s1, length);
+    // we call having reference as function parameters borrowing
 
     // Mutable reference
     let mut s = String::from("hello");
@@ -60,6 +65,8 @@ fn main() {
     // let r2 = &mut s;
     // println!("{}, {}", r1, r2);
     // prevent data races at compile time
+    // immutable reference and mutable reference 同时出现, immutable reference 使用要在 mutable reference
+    // 定义前
 
     // Dangling References
     // let reference_nothing = dangle();
@@ -69,6 +76,7 @@ fn main() {
     // 2. References must always be valid.
 
     // The Slice Type
+    // doesn't have ownership
     println!("--- The slice type ---");
     let mut s = String::from("hello world");
 
@@ -85,10 +93,20 @@ fn main() {
     let hello = &s[0..5];
     let world = &s[6..11];
 
-    let mut s = String::from("hello world");
-    let word = first_word_slice(&s);
+    let mut s = String::from("hello world"); // here we have a mutable reference
+    let word = first_word_slice(&s); // here we have a immutable slice
+    // s.clear();
     println!("first world is {}", word);
-    s.clear();
+    // s.clear();
+
+    let s = "Hello world."; // s is a slice point to that specific point of the binary.
+
+    let my_string = String::from("hello world");
+    let word = first_word_all_slice(&my_string[..]);
+
+    let my_string_literal = "hello world";
+    let word = first_word_all_slice(&my_string_literal[..]);
+    let word = first_word_all_slice(my_string_literal);
 }
 
 fn takes_ownership(some_string: String) { // some_string comes into scope
@@ -141,6 +159,18 @@ fn first_word(s: &String) -> usize {
 }
 
 fn first_word_slice(s: &String) -> &str {
+    let bytes = s.as_bytes();
+
+    for (i, &item) in bytes.iter().enumerate() {
+        if item == b' ' {
+            return &s[0..i];
+        }
+    }
+
+    &s[0..]
+}
+
+fn first_word_all_slice(s: &str) -> &str {
     let bytes = s.as_bytes();
 
     for (i, &item) in bytes.iter().enumerate() {
